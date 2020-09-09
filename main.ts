@@ -5,53 +5,61 @@
 let playerOneScore = 0
 let pleyerTwoScore = 0
 
+let playerOneRoundScore = 0
+let playerTwoRoundScore = 0
+let playerAdvantage : PlayerAdvantage = .none 
+
 let game : Array<Array<number>> = [[15,40],[30,40],[10,30]]
 
 for (let i = 0; i < game.length; i++) {
     DecidePlayerWinEachRound(i[0],i[1])
-
+}
 function DecidePlayerWinEachRound(player1Points : number, player2Points : number) : Game {
-    switch (player1Points - player2Points) {
+    playerOneRoundScore += player2Points
+    playerTwoRoundScore += player2Points
+    if playerOneRoundScore <= player2Points {
+        // player 2 get the advantage
+        playerAdvantage = .player2
+    }
+    if playerTwoRoundScore <= player1Points {
+        // player 1 get the advantage
+        layerAdvantage = .player1
+    }
+    switch (playerOneRoundScore - playerTwoRoundScore) {
         case -40:
             //player 2 wins
+            resetGameScores()
             updateGameResult(0,1)
             break; 
-        case -30:
-            // player2 Advantage
-            break;
-        case -25:
-            // player2 Advantage
-            break; 
-        case -15:
-            // player2 Advantage
-            break; 
-        case -10:
-            // player2 Advantage
-            break;
         case 0:
             // deuce
-            updateGameResult(1,1)
-            break;
-        case 10:
-            // player1 Advantage
-            break;
-        case 15:
-            // player1 Advantage
-            break; 
-        case 25:
-            // player1 Advantage
-            break;
-        case 30:
-            // player 1 wins
-            updateGameResult(1,0)
+            switch playerAdvantage {
+                case .none:
+                    updateGameResult(1,1)
+                    break;
+                case .player1:
+                    updateGameResult(1,0)
+                    break;
+                case .player2:
+                    updateGameResult(0,1)
+                    break;
+            }
             break;
         case 40:
             // player 1 wins
+            resetGameScores()
             updateGameResult(1,0)
             break;
         default:
+            // round continues
             break;
     }
+}
+
+function resetGameScores() {
+    playerOneRoundScore = 0
+    playerTwoRoundScore = 0
+    playerAdvantage = .none
 }
 
 function updateGameResult(player1Score : number, player2Score : number) {
@@ -72,13 +80,15 @@ function decideGameWinner(player1Score:number,player2Score:number) {
     } else {
         // the game didn't finish yet
     }
-
-
-}
-
 }
 
 interface Game {
     pleyer1Ponts : number
     player2Points : number
+}
+
+interface PlayerAdvantage {
+    player1
+    player2
+    none
 }
